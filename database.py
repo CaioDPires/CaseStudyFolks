@@ -2,12 +2,10 @@ import csv
 from datetime import datetime
 import sqlite3
 
-
-##Funcao utilizada para salvar os dados naoEstruturados processados em base
-def cria_nao_estruturada_sqlite(df):
+def cria_nao_estruturada_sqlite(dictionary):
     try:
         consultation_info = []
-        for values in df:
+        for values in dictionary:
             dt = datetime.strptime(values['DATA'], '%Y-%m-%d')
             
             # Convert the datetime object to a date object
@@ -50,10 +48,10 @@ def cria_nao_estruturada_sqlite(df):
             print('SQLite Connection closed')
 
 
-def cria_estruturada_sqlite(df):
+def cria_estruturada_sqlite(dictionary):
     try:
         consultation_info = []
-        for values in df:
+        for values in dictionary:
             dt = datetime.strptime(values['DATA'], '%Y-%m-%d')
             
             # Convert the datetime object to a date object

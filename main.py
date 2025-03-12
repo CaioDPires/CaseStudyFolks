@@ -3,8 +3,8 @@ from classifier import *
 from preprocess import *
 import time
 from database import *
+from io import StringIO
 
-### LEMBRANDO: 0 = RECEITA, 1 = RECEITA
 
 #Simulacao da rota GET (imaginando que a escolha entre estruturado ou nao estruturado seja parametro da rota (na URL))
 def api_get(rota:str)->str:
@@ -71,10 +71,10 @@ def processar_nao_estruturado(df):
 if __name__ =='__main__':
     ##Tentar conexao a api varias vezes, senao a periodicidade ampla pode ser um problema caso haja defeito na rota
     ##USAR APENAS UMA DAS DUAS
-    #dados = call_api_with_retry('/estruturado')
-    dados = call_api_with_retry('/naoEstruturado')
+    dados = call_api_with_retry('/estruturado')
+    #dados = call_api_with_retry('/naoEstruturado')
 
-    df = pd.read_json(dados)
+    df = pd.read_json(StringIO(dados))
 
     if('CD_TUSS' in df.columns.names):
         #Transforma a df em uma lista de tuplas nomeadas e passa para o metodo que salva em base sqlite
@@ -85,7 +85,7 @@ if __name__ =='__main__':
         #e armazenando as classificacoes na coluna 'LABEL'
         processar_nao_estruturado(df)
         #Transforma a df em uma lista de tuplas nomeadas e passa para o metodo que salva em base sqlite
-        cria_nao_estruturada_sqlite(list(df.itertuples(index=False)))
+        cria_nao_estruturada_sqlite(df.to_dict(orient='records'))
 
         ##Se quiser salvar em csv para mais facil visualizacao
         #df.to_csv('data_sample/dadosProcessados.csv', index=False)
