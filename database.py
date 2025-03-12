@@ -2,6 +2,8 @@ import csv
 from datetime import datetime
 import sqlite3
 
+
+##Funcao utilizada para salvar os dados naoEstruturados processados em base
 def cria_nao_estruturada_sqlite(df):
     try:
         consultation_info = []
