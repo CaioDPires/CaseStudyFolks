@@ -1,0 +1,206 @@
+Customer Retention Metrics
+
+Key Questions:
+How many patients return for follow-up consultations or procedures?
+
+What percentage of patients are "repeat customers" vs. "one-time visitors"?
+
+Statistics to Calculate:
+
+Retention Rate:
+(Number of patients with ≥2 consultations / Total unique patients) * 100
+
+Cohort Analysis:
+
+Group patients by their first consultation date (monthly/quarterly cohorts).
+
+Track how many return within 30/60/90 days for follow-ups (e.g., exams, referrals).
+
+Churn Rate:
+(Patients who never returned after their first consultation / Total patients) * 100
+
+Insights:
+Identify "high-value" patients (frequent returners) and target them for loyalty programs.
+
+Flag patients who received test requests/referrals but never scheduled follow-ups.
+
+2. Procedure and Category Analysis
+Key Questions:
+Which procedures (TUSS codes) or prescription/test/referral categories are most common?
+
+Do specific procedures correlate with higher retention?
+
+Statistics to Calculate:
+Top Procedures:
+
+sql
+Copy
+SELECT TUSS_code, COUNT(*) AS frequency 
+FROM structured_data 
+GROUP BY TUSS_code 
+ORDER BY frequency DESC
+Category Distribution:
+
+sql
+Copy
+SELECT category, COUNT(*) AS frequency 
+FROM unstructured_data 
+GROUP BY category 
+ORDER BY frequency DESC
+Cross-Analysis:
+
+Do patients with unstructured prescriptions/test requests return less often than those with TUSS-coded procedures?
+
+Insights:
+Prioritize resources for high-frequency procedures (e.g., staffing for common exams).
+
+Identify underutilized services (e.g., referrals not leading to follow-ups).
+
+3. Time-Based Analysis
+Key Questions:
+Is there seasonality in consultations (e.g., flu season spikes)?
+
+How quickly do patients schedule follow-up exams after a referral?
+
+Statistics to Calculate:
+Time Between Consultations:
+
+sql
+Copy
+SELECT patient_id, 
+  DATE_DIFF(next_consult_date, consult_date, DAY) AS days_between_visits
+FROM structured_data
+Time-to-Action:
+
+For patients with test requests, measure the average time between referral and exam scheduling.
+
+Insights:
+Optimize scheduling during peak periods (e.g., add staff for seasonal demand).
+
+Send reminders to patients who delay follow-ups beyond a threshold (e.g., >14 days).
+
+4. Hospital Loyalty Metrics
+Key Questions:
+Do patients schedule follow-up exams at the same hospital?
+
+Which procedures are most likely to "leak" to external providers?
+
+Statistics to Calculate:
+Same-Hospital Retention:
+
+sql
+Copy
+(Patients who scheduled follow-up exams at the same hospital / Total patients with referrals) * 100
+Procedure Leakage:
+
+Identify TUSS codes or categories (e.g., MRI, specialist referrals) where patients often go elsewhere.
+
+Insights:
+Promote in-house services for high-leakage procedures (e.g., discounts, faster scheduling).
+
+Highlight convenience factors (e.g., "Book your next exam here in 1 click!").
+
+5. Predictive Analytics
+Key Questions:
+Which patients are at risk of not returning?
+
+Can we predict exam scheduling based on historical behavior?
+
+Models to Build:
+Churn Prediction:
+
+Use features like days_since_last_visit, procedure_type, and category to predict likelihood of returning.
+
+Exam Scheduling Likelihood:
+
+Predict if a patient will schedule a follow-up exam after a referral.
+
+Insights:
+Proactively engage at-risk patients with personalized offers (e.g., SMS reminders).
+
+Allocate marketing budgets to high-priority patients.
+
+6. Operational Efficiency
+Key Questions:
+Are there bottlenecks in exam scheduling or resource allocation?
+
+Which procedures have the longest wait times?
+
+Statistics to Calculate:
+Procedure Duration:
+
+sql
+Copy
+SELECT TUSS_code, AVG(exam_duration) 
+FROM structured_data 
+GROUP BY TUSS_code
+Peak Hours:
+
+sql
+Copy
+SELECT EXTRACT(HOUR FROM consult_time) AS hour, COUNT(*) AS consultations 
+FROM structured_data 
+GROUP BY hour
+Insights:
+Optimize staff schedules to match demand peaks (e.g., mornings for lab tests).
+
+Streamline workflows for high-duration procedures.
+
+7. Revenue Impact
+Key Questions:
+Do repeat customers generate more revenue than one-time patients?
+
+Which procedures/categories are most profitable?
+
+Statistics to Calculate:
+Lifetime Value (LTV):
+
+sql
+Copy
+SELECT patient_id, SUM(procedure_cost) AS total_spent 
+FROM structured_data 
+GROUP BY patient_id
+Cost of Acquisition vs. Retention:
+
+Compare marketing costs for new vs. returning patients.
+
+Insights:
+Focus on retaining high-LTV patients (e.g., VIP perks).
+
+Adjust pricing for low-margin, high-frequency procedures.
+
+8. Data Quality Checks
+Missing TUSS Codes:
+
+sql
+Copy
+SELECT COUNT(*) AS missing_tuss 
+FROM structured_data 
+WHERE TUSS_code IS NULL
+Unclassified Text:
+
+sql
+Copy
+SELECT COUNT(*) AS unclassified 
+FROM unstructured_data 
+WHERE category NOT IN ('prescription', 'test_request', 'referral')
+Visualization Recommendations
+Retention Dashboard:
+
+Cohort analysis heatmaps.
+
+Retention curves (e.g., % returning after 30/60/90 days).
+
+Procedure Analysis:
+
+Top TUSS codes (bar charts).
+
+Procedure leakage (sunburst charts).
+
+Operational Metrics:
+
+Peak hours (line charts).
+
+Exam scheduling timelines (Gantt charts).
+
+By combining structured TUSS codes with your ML-classified unstructured data, you’ll uncover actionable insights to improve retention, operational efficiency, and revenue. Use BigQuery to join datasets (e.g., patient_id and date), and leverage Looker Studio for interactive dashboards.
