@@ -13,10 +13,7 @@ def cria_nao_estruturada_sqlite(dictionary):
 
             consultation_info.append((date_obj, values['TEL'], values['CPF'], values['SOLICITANTE'], values['DS_RECEITA'], values['LABEL']))
             #print(consultation_info)
-    except Exception as e:
-        print(e)
 
-    try:
         # Connect to SQLite
         sqliteConnection = sqlite3.connect('hospitalDB.db')
         cursor = sqliteConnection.cursor()
@@ -30,7 +27,7 @@ def cria_nao_estruturada_sqlite(dictionary):
         DsReceita text,
         Tipo text,
         PRIMARY KEY(Data, CPF, DsReceita));""")
-    
+        sqliteConnection.commit()
         # Insert data into table
         cursor.executemany(
             "INSERT OR REPLACE into NaoEstruturado (Data, Telefone, CPF, Nome, DsReceita, Tipo) VALUES (?, ?, ?, ?, ?, ?);", consultation_info)
@@ -59,11 +56,8 @@ def cria_estruturada_sqlite(dictionary):
 
             consultation_info.append((date_obj, values['TEL'], values['CPF'], values['SOLICITANTE'], values['CD_TUSS'], values['DS_RECEITA']))
             #print(consultation_info)
-    except Exception as e:
-        print(e)
 
                 
-    try:
         # Connect to SQLite
         sqliteConnection = sqlite3.connect('hospitalDB.db')
         cursor = sqliteConnection.cursor()
@@ -77,7 +71,9 @@ def cria_estruturada_sqlite(dictionary):
         CodigoTUSS text,
         DsReceita text,
         PRIMARY KEY(Data, CPF, CodigoTUSS));""")
-    
+
+        sqliteConnection.commit()
+        
         # Insert data into table
         cursor.executemany(
             "insert into Estruturado (Data, Telefone, CPF, Nome, CodigoTUSS , DsReceita) VALUES (?, ?, ?, ?, ?, ?);", consultation_info)
@@ -142,8 +138,3 @@ def cria_nao_estruturada_sqlite_do_csv():
         if sqliteConnection:
             sqliteConnection.close()
             print('SQLite Connection closed')
-
-
-if __name__ == '__main__':
-    cria_estruturada_sqlite()
-    cria_nao_estruturada_sqlite()
